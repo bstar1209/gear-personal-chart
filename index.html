@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GEAR CHART</title>
+</head>
+
+<body>
+    <div>
+        <canvas id="gearChart" height="100"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", `https://api.raydium.io/v1/dex/tv/history?market=HzFs14Ua3opDJAg1nmonwJWGuLspnqafdv8wxWxQXrNa&resolution=1d&from_time=1613121772&to_time=${Date.parse(new Date()) / 1000}`, false ); // false for synchronous request
+        xmlHttp.send( null );
+
+        let resData = JSON.parse(xmlHttp.responseText);
+        let closeData = resData.c;
+
+        let labels = [];
+        for (let i = 0; i < resData.t.length; i++) {
+            const d = new Date(resData.t[i] * 1000);
+
+            const year = d.getFullYear()
+            const month = d.getMonth() + 1
+            const date = d.getDate()
+
+            labels.push(`${year}-${month}-${date}`)
+        }
+
+        const data = {
+            labels: labels,
+            datasets: [{
+                label: 'GEAR/USDC',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: closeData,
+            }]
+        };
+
+        const config = {
+            type: 'line',
+            data: data,
+            options: {}
+        };
+    </script>
+    <script>
+        const gearChart = new Chart(
+            document.getElementById('gearChart'),
+            config
+        );
+    </script>
+</body>
+
+</html>
